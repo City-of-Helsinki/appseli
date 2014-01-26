@@ -3,3 +3,4 @@ django-modeltranslation
 djangorestframework
 markdown
 django-filter
+Pillow
