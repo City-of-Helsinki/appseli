@@ -9,6 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^proto/', include("proto_ui.urls")),
 )
 
 if settings.DEBUG:

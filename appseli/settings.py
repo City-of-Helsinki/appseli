@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'rest_framework',
 
     'apps',
+    'proto_ui',
 )
 
 MIDDLEWARE_CLASSES = (

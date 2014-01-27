@@ -1,0 +1,49 @@
+{% extends "proto_ui/base.html" %}
+
+
+{% block css %}
+<style>
+    .apps {
+        padding: 0;
+    }
+    .apps:after {
+        content: ".";
+        visibility: hidden;
+        display: block;
+        line-height: 0;
+        height: 0;
+    }
+    .app {
+        list-style-type: none;
+        width: 200px;
+        float: left;
+    }
+    .app:hover {
+        background-color: #eee;
+    }
+    .app > a {
+        display: block;
+        padding: 10px;
+    }
+    .app-image {
+        max-width: 100%;
+    }
+    .app-name {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<ul class="apps">
+    {% for application in applications %}
+        <li class="app">
+            <a href="{% url "proto-application" application.pk %}">
+                <img src="{{ application.image.url }}" class="app-image">
+                <span class="app-name">{{ application }}</span>
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
