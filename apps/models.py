@@ -14,7 +14,7 @@ class Application(models.Model):
     name = models.CharField(max_length=100)  # translatable
     slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField()  # translatable
-    image = models.ImageField(upload_to='apps')
+    image = models.ImageField(upload_to='apps/icons')
     vendor = models.CharField(max_length=100)  # should be ForeignKey?
     rating = models.FloatField()  # should be calculated automatically?
 
