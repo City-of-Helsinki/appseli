@@ -2,6 +2,7 @@
 A script for importing database content and media from apps.hel.fi.
 """
 from collections import namedtuple
+from datetime import datetime
 import logging
 from optparse import make_option
 import tempfile
@@ -15,6 +16,7 @@ import requests
 from apps.models import (
     Application,
     Platform,
+    Category,
     ApplicationPlatformSupport,
     ApplicationScreenshot,
     ApplicationLanguageSupport,
@@ -51,8 +53,8 @@ RawApplicationRecord = namedtuple("RawApplicationRecord", [
     "screenshot_urls",
     "publisher_name",
     "publish_date",
-    "contact_url",
-    "support_url"
+    "support_link",
+    "contact_email",
 ])
 
 
@@ -79,7 +81,7 @@ class Command(BaseCommand):
 
         if options["delete"]:
             logger.info("Deleting data from DB")
-            for model in [Application, Platform, ApplicationPlatformSupport,
+            for model in [Application, Platform, Category, ApplicationPlatformSupport,
                           ApplicationLanguageSupport, ApplicationScreenshot]:
                 model.objects.all().delete()
 
@@ -105,11 +107,19 @@ def import_legacy_data():
             platform = Platform.objects.create(name=type, type=type)
         platforms_by_type[type] = platform
 
-    # Get / create applications
     for raw_application in fetch_raw_applications():
         slug = slugify(raw_application.name)
         platform = platforms_by_type[raw_application.platform_type]
 
+        # Get / create category
+        category_slug = slugify(raw_application.category_name)
+        try:
+            category = Category.objects.get(slug=category_slug)
+        except Category.DoesNotExist:
+            category = Category.objects.create(name=raw_application.category_name,
+                                               slug=category_slug)
+
+        # Get / create application
         try:
             application = Application.objects.get(slug=slug)
         except Application.DoesNotExist:
@@ -117,9 +127,13 @@ def import_legacy_data():
             application = Application.objects.create(
                 name=raw_application.name,
                 slug=slug,
+                category=category,
                 description=raw_application.description,
                 vendor=raw_application.publisher_name,
+                publish_date=raw_application.publish_date,
                 rating=0.0,
+                support_link=raw_application.support_link,
+                contact_email=raw_application.contact_email,
             )
             image = fetch_file(raw_application.thumbnail_url)
             application.image.save(slug, image)
@@ -198,14 +212,26 @@ def parse_application_urls(html_content):
 def parse_application_data(html_content, platform_type):
     logger.info("Parsing raw application data")
     soup = BeautifulSoup(html_content).find(id="single_page")
+
     _table_rows = soup.find("table").findAll("tr")
-    _contact_link = soup.find(**{"data-icon": "appstore-contact"})
-    _support_link = soup.find(**{"data-icon": "appstore-support"})
+    _contact_elem = soup.find(**{"data-icon": "appstore-contact"})
+    contact_email = ""
+    if _contact_elem:
+        contact_email = _contact_elem.attrs["href"]
+        contact_email = contact_email.split(":", 1)[1]  # mailto:
+        contact_email = contact_email.rsplit("?", 1)[0]  # ?subject=blahblah
+    _support_elem = soup.find(**{"data-icon": "appstore-support"})
+    support_link = _support_elem.attrs["href"] if _support_elem else ""
+
     # The download url is a local page that redirects to the actual app store /
     # etc page. Resolve it to the actual url (requires an HTTP request)
     _local_download_url = soup.find("a", rel="external").attrs["href"]
     _response = fetch(_local_download_url, func=requests.head)
     platform_link = _response.headers["location"]
+
+    _publish_date_str = _table_rows[1].findAll("td")[1].text.strip()
+    publish_date = datetime.strptime(_publish_date_str, "%d.%m.%Y %H:%M")
+    publish_date = publish_date.replace(tzinfo=timezone.utc)
 
     return RawApplicationRecord(
         name=soup.find(id="apptitle").text.strip(),
@@ -219,9 +245,9 @@ def parse_application_data(html_content, platform_type):
             for img in soup.findAll(class_="screenshotimage")
         ),
         publisher_name=_table_rows[0].findAll("td")[1].text.strip(),
-        publish_date=_table_rows[1].findAll("td")[1].text.strip(),
-        contact_url=_contact_link.attrs["href"] if _contact_link else "",
-        support_url=_support_link.attrs["href"] if _support_link else "",
+        publish_date=publish_date,
+        contact_email=contact_email,
+        support_link=support_link,
     )
 
 

@@ -16,10 +16,28 @@ class Platform(models.Model):
 class Application(models.Model):
     name = models.CharField(max_length=100)  # translatable
     slug = models.SlugField(max_length=100, unique=True)
+    category = models.ForeignKey('Category',
+                                 related_name='applications',
+                                 null=True)
+    platforms = models.ManyToManyField('Platform',
+                                       related_name='applications',
+                                       through='ApplicationPlatformSupport')
     description = models.TextField()  # translatable
     image = models.ImageField(upload_to='apps/icons')
     vendor = models.CharField(max_length=100)  # should be ForeignKey?
+    publish_date = models.DateTimeField()
     rating = models.FloatField()  # should be calculated automatically?
+    support_link = models.CharField(max_length=200, blank=True)
+    contact_email = models.EmailField(max_length=254, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
+class Category(models.Model):
+    name = models.CharField(max_length=100)  # translatable
+    slug = models.SlugField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
