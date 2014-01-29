@@ -39,7 +39,7 @@
 <ul class="apps">
     {% for application in applications %}
         <li class="app">
-            <a href="{% url "proto-application" application.pk %}">
+            <a href="{% url "proto-application-details" application.pk %}">
                 <img src="{{ application.image.url }}" class="app-image">
                 <span class="app-name">{{ application }}</span>
             </a>

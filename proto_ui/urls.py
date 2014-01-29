@@ -3,6 +3,7 @@ from . import views
 
 
 urlpatterns = patterns('',
-    url(r'^$', views.index, name="proto-index"),
-    url(r'^app/(?P<pk>\d+)/$', views.application, name="proto-application"),
+    url(r'^$', views.list_applications, name="proto-applications"),
+    url(r'^app/(?P<pk>\d+)/$', views.show_application_details,
+        name="proto-application-details"),
 )
