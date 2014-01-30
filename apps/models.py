@@ -61,7 +61,8 @@ class ApplicationScreenshot(models.Model):
 @python_2_unicode_compatible
 class ApplicationLanguageSupport(models.Model):
     language = models.CharField(max_length=5, db_index=True)
-    application = models.ForeignKey(Application, db_index=True)
+    application = models.ForeignKey(Application, db_index=True,
+                                    related_name='languages')
 
     class Meta:
         unique_together = (('language', 'application'),)
