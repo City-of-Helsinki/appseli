@@ -1,9 +1,5 @@
 from rest_framework import serializers
-from .models import (
-    Application,
-    ApplicationPlatformSupport,
-    Platform,
-)
+from . import models
 
 
 class SupportedPlatformSerializer(serializers.ModelSerializer):
@@ -13,7 +9,7 @@ class SupportedPlatformSerializer(serializers.ModelSerializer):
                                               source='platform')
 
     class Meta:
-        model = ApplicationPlatformSupport
+        model = models.ApplicationPlatformSupport
         fields = ('url', 'name', 'type', 'platform_link',
                   'rating', 'nr_reviews', 'last_updated')
 
@@ -27,10 +23,10 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
     image = serializers.SerializerMethodField('get_full_image_url')
 
     class Meta:
-        model = Application
-        fields = ('url', 'name', 'slug', 'description', 'image', 'vendor',
-                  'rating', 'publish_date', 'support_link', 'contact_email',
-                  'platforms', 'languages')
+        model = models.Application
+        fields = ('url', 'name', 'slug', 'description', 'category', 'image',
+                  'vendor', 'rating', 'publish_date', 'support_link',
+                  'contact_email', 'platforms', 'languages')
 
     def get_full_image_url(self, obj):
         request = self.context["request"]
@@ -39,5 +35,11 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
 
 class PlatformSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Platform
+        model = models.Platform
         fields = ('url', 'name', 'type', 'applications')
+
+
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = models.Category
+        fields = ('url', 'name', 'slug', 'applications')
