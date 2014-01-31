@@ -24,12 +24,17 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
     languages = serializers.SlugRelatedField(many=True,
                                              read_only=True,
                                              slug_field='language')
+    image = serializers.SerializerMethodField('get_full_image_url')
 
     class Meta:
         model = Application
         fields = ('url', 'name', 'slug', 'description', 'image', 'vendor',
                   'rating', 'publish_date', 'support_link', 'contact_email',
                   'platforms', 'languages')
+
+    def get_full_image_url(self, obj):
+        request = self.context["request"]
+        return request.build_absolute_uri(obj.image.url)
 
 
 class PlatformSerializer(serializers.HyperlinkedModelSerializer):
