@@ -16,6 +16,7 @@ class SupportedPlatformSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
     platforms = SupportedPlatformSerializer(source='applicationplatformsupport_set',
+                                            read_only=True,
                                             many=True)
     languages = serializers.SlugRelatedField(many=True,
                                              read_only=True,
