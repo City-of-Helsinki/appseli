@@ -1,6 +1,7 @@
 """
 A script for importing database content and media from apps.hel.fi.
 """
+import re
 from collections import namedtuple
 from datetime import datetime
 import logging
@@ -211,6 +212,10 @@ def parse_application_urls(html_content):
     for li in list_.findAll("li"):
         yield li.find("a").attrs["href"]
 
+def clean_text(text):
+    # remove consecutive whitespaces
+    text = re.sub(r'\s\s+', ' ', text, re.U)
+    return text.strip()
 
 def parse_application_data(html_content, platform_type):
     logger.info("Parsing raw application data")
@@ -232,22 +237,22 @@ def parse_application_data(html_content, platform_type):
     _response = fetch(_local_download_url, func=requests.head)
     platform_link = _response.headers["location"]
 
-    _publish_date_str = _table_rows[1].findAll("td")[1].text.strip()
+    _publish_date_str = clean_text(_table_rows[1].findAll("td")[1].text)
     publish_date = datetime.strptime(_publish_date_str, "%d.%m.%Y %H:%M")
     publish_date = publish_date.replace(tzinfo=timezone.utc)
 
     return RawApplicationRecord(
-        name=soup.find(id="apptitle").text.strip(),
-        category_name=soup.find(id="detail-b").find("p").text.strip(),
+        name=clean_text(soup.find(id="apptitle").text),
+        category_name=clean_text(soup.find(id="detail-b").find("p").text),
         platform_type=platform_type,
         thumbnail_url=soup.find(id="detail-a").find("img").attrs["src"],
-        description=soup.find(id="description").text.strip(),
+        description=clean_text(soup.find(id="description").text),
         platform_link=platform_link,
         screenshot_urls=tuple(
             img.attrs["src"]
             for img in soup.findAll(class_="screenshotimage")
         ),
-        publisher_name=_table_rows[0].findAll("td")[1].text.strip(),
+        publisher_name=clean_text(_table_rows[0].findAll("td")[1].text),
         publish_date=publish_date,
         contact_email=contact_email,
         support_link=support_link,
