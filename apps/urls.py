@@ -4,9 +4,9 @@ from . import views
 
 
 router = DefaultRouter()
-router.register(r'applications', views.ApplicationViewSet)
-router.register(r'platforms', views.PlatformViewSet)
-router.register(r'categories', views.CategoryViewSet)
+router.register(r'application', views.ApplicationViewSet)
+router.register(r'platform', views.PlatformViewSet)
+router.register(r'category', views.CategoryViewSet)
 
 
 urlpatterns =  patterns('',
