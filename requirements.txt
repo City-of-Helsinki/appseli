@@ -5,4 +5,5 @@ markdown
 django-filter
 Pillow
 requests
+requests-cache
 beautifulsoup4
