@@ -140,7 +140,7 @@ def import_legacy_data():
                 contact_email=raw_application.contact_email,
             )
             image = fetch_file(raw_application.thumbnail_url)
-            application.image.save(slug, image)
+            application.image.save("{0}.{1}".format(slug, image.file_ext), image)
 
         # Get / create platform support
         supports_with_same_app = ApplicationPlatformSupport.objects.filter(
@@ -262,11 +262,14 @@ def parse_application_data(html_content, platform_type):
 def fetch_file(url):
     prefix = url.split("/")[-1]
     response = fetch(url)
-    tmp = tempfile.NamedTemporaryFile(delete=True, prefix=prefix)
+    content_type = response.headers['content-type']
+    assert content_type == 'image/jpeg'
+    tmp = tempfile.NamedTemporaryFile(delete=True, prefix=prefix, suffix='.jpg')
     tmp.write(response.content)
     tmp.flush()
-    return File(tmp)
-
+    f = File(tmp)
+    f.file_ext = 'jpg'
+    return f
 
 def fetch(url, func=requests.get, ua=None, **kwargs):
     logger.info("Fetching {}".format(url))
