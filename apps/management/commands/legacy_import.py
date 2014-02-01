@@ -22,6 +22,9 @@ from apps.models import (
     ApplicationLanguageSupport,
 )
 
+import requests_cache
+requests_cache.install_cache('legacy_import')
+
 
 BASE_URL = "http://apps.hel.fi/hel.fi"
 # The page displays different content for different user agents.
