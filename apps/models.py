@@ -23,12 +23,15 @@ class Application(models.Model):
                                        related_name='applications',
                                        through='ApplicationPlatformSupport')
     description = models.TextField()  # translatable
-    image = models.ImageField(upload_to='apps/icons')
     vendor = models.CharField(max_length=100)  # should be ForeignKey?
     publish_date = models.DateTimeField()
     rating = models.FloatField()  # should be calculated automatically?
     support_link = models.CharField(max_length=200, blank=True)
     contact_email = models.EmailField(max_length=254, blank=True)
+
+    def _get_upload_path(instance, filename):
+        return 'apps/{}/{}'.format(instance.slug, filename)
+    image = models.ImageField(upload_to=_get_upload_path)
 
     def __str__(self):
         return self.name
@@ -49,7 +52,11 @@ class ApplicationScreenshot(models.Model):
     application = models.ForeignKey(Application)
     platform = models.ForeignKey(Platform, null=True)
     index = models.PositiveSmallIntegerField()
-    image = models.ImageField(upload_to='apps/screenshots')
+
+    def _get_upload_path(instance, filename):
+        return 'apps/{}/screenshots/{}'.format(instance.application.slug,
+                                               filename)
+    image = models.ImageField(upload_to=_get_upload_path)
 
     class Meta:
         unique_together = (('application', 'platform', 'index'),)

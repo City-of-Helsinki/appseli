@@ -137,7 +137,7 @@ def import_legacy_data():
                 contact_email=raw_application.contact_email,
             )
             image = fetch_file(raw_application.thumbnail_url)
-            application.image.save("{0}.{1}".format(slug, image.file_ext), image)
+            application.image.save("icon.{0}".format(image.file_ext), image)
 
         # Get / create platform support
         supports_with_same_app = ApplicationPlatformSupport.objects.filter(
@@ -170,7 +170,7 @@ def import_legacy_data():
             )
 
         # Get / create screenshots
-        for index, url in enumerate(raw_application.screenshot_urls):
+        for index, url in enumerate(raw_application.screenshot_urls, start=1):
             # dumb heuristic -- doesn't actually check that the
             # screenshot is there
             if ApplicationScreenshot.objects.filter(platform=platform,
@@ -183,7 +183,10 @@ def import_legacy_data():
                 index=index,
             )
             image = fetch_file(url)
-            screenshot.image.save(image.name, image)
+            filename = "{0}-screenshot-{1}.{2}".format(platform.type,
+                                                       index,
+                                                       image.file_ext)
+            screenshot.image.save(filename, image)
 
         # Get / create language support
         ApplicationLanguageSupport.objects.get_or_create(
@@ -209,10 +212,12 @@ def parse_application_urls(html_content):
     for li in list_.findAll("li"):
         yield li.find("a").attrs["href"]
 
+
 def clean_text(text):
     # remove consecutive whitespaces
     text = re.sub(r'\s\s+', ' ', text, re.U)
     return text.strip()
+
 
 def parse_application_data(html_content, platform_type):
     logger.info("Parsing raw application data")
@@ -267,6 +272,7 @@ def fetch_file(url):
     f = File(tmp)
     f.file_ext = 'jpg'
     return f
+
 
 def fetch(url, func=requests.get, ua=None, **kwargs):
     logger.info("Fetching {}".format(url))
