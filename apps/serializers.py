@@ -28,7 +28,7 @@ class SupportedPlatformSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ApplicationPlatformSupport
-        fields = ('url', 'name', 'type', 'platform_link',
+        fields = ('url', 'name', 'type', 'store_url',
                   'rating', 'nr_reviews', 'last_updated')
 
 

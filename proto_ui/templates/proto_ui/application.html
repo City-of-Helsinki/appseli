@@ -6,7 +6,7 @@
 <ul>
     {% for platform_support in application.applicationplatformsupport_set.all %}
         <li>
-            <a href="{{ platform_support.platform_link }}">
+            <a href="{{ platform_support.store_url }}">
                 {% blocktrans with platform_name=platform_support.platform.name %}
                 Available for {{ platform_name }}
                 {% endblocktrans %}

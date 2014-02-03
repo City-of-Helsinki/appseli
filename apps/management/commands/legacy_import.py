@@ -50,7 +50,7 @@ RawApplicationRecord = namedtuple("RawApplicationRecord", [
     "platform_type",
     "thumbnail_url",
     "description",
-    "platform_link",
+    "store_url",
     "screenshot_urls",
     "publisher_name",
     "publish_date",
@@ -146,7 +146,7 @@ def import_legacy_data():
         )[:1]
         supports_with_same_link = ApplicationPlatformSupport.objects.filter(
             platform=platform,
-            platform_link=raw_application.platform_link,
+            store_url=raw_application.store_url,
         )[:1]
 
         if supports_with_same_app:
@@ -157,13 +157,13 @@ def import_legacy_data():
                 "Error creating application support for {0} on "
                 "{1}: Another application ({2}) already has the platform url "
                 "{3} ".format(application, platform, existing,
-                              raw_application.platform_link)
+                              raw_application.store_url)
             )
         else:
             ApplicationPlatformSupport.objects.create(
                 platform=platform,
                 application=application,
-                platform_link=raw_application.platform_link,
+                store_url=raw_application.store_url,
                 rating=0.0,
                 nr_reviews=0,
                 last_updated=timezone.now(),
@@ -237,7 +237,7 @@ def parse_application_data(html_content, platform_type):
     # etc page. Resolve it to the actual url (requires an HTTP request)
     _local_download_url = soup.find("a", rel="external").attrs["href"]
     _response = fetch(_local_download_url, func=requests.head)
-    platform_link = _response.headers["location"]
+    store_url = _response.headers["location"]
 
     _publish_date_str = clean_text(_table_rows[1].findAll("td")[1].text)
     publish_date = datetime.strptime(_publish_date_str, "%d.%m.%Y %H:%M")
@@ -249,7 +249,7 @@ def parse_application_data(html_content, platform_type):
         platform_type=platform_type,
         thumbnail_url=soup.find(id="detail-a").find("img").attrs["src"],
         description=clean_text(soup.find(id="description").text),
-        platform_link=platform_link,
+        store_url=store_url,
         screenshot_urls=tuple(
             img.attrs["src"]
             for img in soup.findAll(class_="screenshotimage")
