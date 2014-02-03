@@ -76,13 +76,13 @@ class ApplicationLanguageSupport(models.Model):
 class ApplicationPlatformSupport(models.Model):
     platform = models.ForeignKey(Platform, db_index=True)
     application = models.ForeignKey(Application, db_index=True)
-    platform_link = models.CharField(max_length=200)
+    store_url = models.CharField(max_length=200)
     rating = models.FloatField()
     nr_reviews = models.PositiveIntegerField()
     last_updated = models.DateTimeField()
 
     class Meta:
-        unique_together = (('platform', 'platform_link'), ('platform', 'application'))
+        unique_together = (('platform', 'store_url'), ('platform', 'application'))
 
     def __str__(self):
         return "{}: {}".format(self.application, self.platform)
