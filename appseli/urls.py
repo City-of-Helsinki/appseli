@@ -10,7 +10,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^proto/', include("proto_ui.urls")),
-    url(r'^api/', include("apps.urls")),
+    url(r'^v1/', include("apps.urls")),
 )
 
 if settings.DEBUG:
