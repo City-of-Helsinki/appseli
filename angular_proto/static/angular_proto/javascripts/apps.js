@@ -17,20 +17,36 @@ angular.module("apps", ["ngRoute", "ngResource"])
 .factory("Applications", ["$resource", function($resource) {
     return $resource("/v1/application/:id");
 }])
+.factory("Categories", ["$resource", function($resource) {
+    return $resource("/v1/category/:id");
+}])
 .config(function($routeProvider) {
     $routeProvider
         .when("/", {
-            controller: "FrontCtrl",
             templateUrl: "front.html"
         })
         .when("/list", {
-            controller: "ListCtrl",
+            controller: "ApplicationListCtrl",
             templateUrl: "list.html"
+        })
+        .when("/application/:applicationId", {
+            controller: "ApplicationCtrl",
+            templateUrl: "application.html"
+        })
+        .when("/categories", {
+            controller: "CategoryListCtrl",
+            templateUrl: "categories.html"
+        })
+        .when("/info", {
+            templateUrl: "info.html"
         });
 })
-.controller("FrontCtrl", function($scope) {
-    // just show the template
-})
-.controller("ListCtrl", ["$scope", "Applications", function($scope, Applications) {
+.controller("ApplicationListCtrl", ["$scope", "Applications", function($scope, Applications) {
     $scope.applications = Applications.query();
+}])
+.controller("ApplicationCtrl", ["$scope", "$routeParams", "Applications", function($scope, $routeParams, Applications) {
+    $scope.application = Applications.get({id:$routeParams.applicationId});
+}])
+.controller("CategoryListCtrl", ["$scope", "Categories", function($scope, Categories) {
+    $scope.categories = Categories.query();
 }]);
