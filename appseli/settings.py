@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'modeltranslation',
     'rest_framework',
+    'corsheaders',
 
     'apps',
     'proto_ui',
@@ -51,6 +52,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'appseli.urls'
@@ -101,3 +104,21 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ),
 }
+
+
+# Allow read operations to the api from all addresses
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/v1/.*$'
+CORS_ALLOW_METHODS = (
+    'GET',
+    'OPTIONS',
+)
+CORS_ALLOW_HEADERS = (
+    'x-requested-with',
+    'content-type',
+    'accept',
+    'origin',
+    'authorization',
+    'x-csrftoken',
+    'accept-language',
+)

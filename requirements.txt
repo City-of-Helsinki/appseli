@@ -8,3 +8,4 @@ requests
 requests-cache
 beautifulsoup4
 html5lib
+django-cors-headers
