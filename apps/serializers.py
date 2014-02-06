@@ -20,6 +20,11 @@ class TranslatedField(serializers.Field):
         }
 
 
+def get_full_image_url(self, obj):
+    request = self.context["request"]
+    return request.build_absolute_uri(obj.image.url)
+
+
 class SupportedPlatformSerializer(serializers.ModelSerializer):
     name = TranslatedField(source="platform.name")
     slug = serializers.Field(source='platform.slug')
@@ -32,6 +37,17 @@ class SupportedPlatformSerializer(serializers.ModelSerializer):
                   'rating', 'nr_reviews', 'last_updated')
 
 
+class ScreenshotSerializer(serializers.ModelSerializer):
+    platform = serializers.Field(source='platform.slug')
+    image = serializers.SerializerMethodField('get_full_image_url')
+
+    class Meta:
+        model = models.ApplicationScreenshot
+        fields = ('image', 'platform')
+
+    get_full_image_url = get_full_image_url
+
+
 class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
     name = TranslatedField()
     description = TranslatedField()
@@ -42,16 +58,17 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
                                              read_only=True,
                                              slug_field='language')
     image = serializers.SerializerMethodField('get_full_image_url')
+    screenshots = ScreenshotSerializer(source="applicationscreenshot_set",
+                                       many=True,
+                                       read_only=True)
 
     class Meta:
         model = models.Application
-        fields = ('url', 'name', 'slug', 'description', 'category', 'image',
+        fields = ('url', 'id', 'name', 'slug', 'description', 'category', 'image',
                   'vendor', 'rating', 'publish_date', 'support_link',
-                  'contact_email', 'platforms', 'languages')
+                  'contact_email', 'platforms', 'languages', 'screenshots')
 
-    def get_full_image_url(self, obj):
-        request = self.context["request"]
-        return request.build_absolute_uri(obj.image.url)
+    get_full_image_url = get_full_image_url
 
 
 class PlatformSerializer(serializers.HyperlinkedModelSerializer):
