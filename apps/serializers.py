@@ -37,6 +37,14 @@ class SupportedPlatformSerializer(serializers.ModelSerializer):
                   'rating', 'nr_reviews', 'last_updated')
 
 
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    name = TranslatedField()
+
+    class Meta:
+        model = models.Category
+        fields = ('url', 'id', 'name', 'slug', 'applications')
+
+
 class ScreenshotSerializer(serializers.ModelSerializer):
     platform = serializers.Field(source='platform.slug')
     image = serializers.SerializerMethodField('get_full_image_url')
@@ -58,6 +66,7 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
                                              read_only=True,
                                              slug_field='language')
     image = serializers.SerializerMethodField('get_full_image_url')
+    category = CategorySerializer(read_only=True)
     screenshots = ScreenshotSerializer(source="applicationscreenshot_set",
                                        many=True,
                                        read_only=True)
@@ -76,12 +85,4 @@ class PlatformSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.Platform
-        fields = ('url', 'name', 'type', 'applications')
-
-
-class CategorySerializer(serializers.HyperlinkedModelSerializer):
-    name = TranslatedField()
-
-    class Meta:
-        model = models.Category
-        fields = ('url', 'name', 'slug', 'applications')
+        fields = ('url', 'id', 'name', 'slug', 'applications')
