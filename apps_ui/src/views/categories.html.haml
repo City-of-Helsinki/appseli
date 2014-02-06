@@ -1,58 +1,11 @@
 %h1 Categories
 .categories
-  .category
-    %a(href="/list")
+  .category(ng-repeat="category in categories")
+    %a(ng-href="/category/{{category.id}}")
       .category-content
         .category--icon
-          %span.glyphicon.glyphicon-camera
+          %span(class="glyphicon {{category.getGlyphiconClass()}}")
         .category--name
-          Tourism
+          {{category.name | translate}}
         .category--count
-          20
-  .category
-    %a(href="/list")
-      .category-content
-        .category--icon
-          %span.glyphicon.glyphicon-glass
-        .category--name
-          Food & Drink
-        .category--count
-          20
-  .category
-    %a(href="/list")
-      .category-content
-        .category--icon
-          %span.glyphicon.glyphicon-picture
-        .category--name
-          Culture
-        .category--count
-          20
-  .category
-    %a(href="/list")
-      .category-content
-        .category--icon
-          %span.glyphicon.glyphicon-plane
-        .category--name
-          Transportation
-        .category--count
-          20
-  .category
-    %a(href="/list")
-      .category-content
-        .category--icon
-          %span.glyphicon.glyphicon-tree-conifer
-        .category--name
-          Nature
-        .category--count
-          20
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+          {{category.applications.length}}

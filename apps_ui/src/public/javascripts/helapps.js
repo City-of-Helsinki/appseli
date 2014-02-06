@@ -35,7 +35,24 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
     return $resource(API_ROOT + "application/:id/");
 }])
 .factory("Categories", ["$resource", "API_ROOT", function($resource, API_ROOT) {
-    return $resource(API_ROOT + "category/:id/");
+    var Categories = $resource(API_ROOT + "category/:id/");
+    var glyphicons = {
+        "travel-local": "glyphicon-camera",
+        "food-drink": "glyphicon-glass",
+        "culture": "glyphicon-picture",
+        "transportation": "glyphicon-plane",
+        "nature": "glyphicon-tree-conifer",
+        "tools": "glyphicon-wrench",
+        "social": "glyphicon-comment",
+        "communications": "glyphicon-cloud",
+        "lifestyle": "glyphicon-star",
+    };
+
+    Categories.prototype.getGlyphiconClass = function() {
+        return glyphicons[this.slug] || "glyphicon-th-large";
+    };
+    return Categories;
+
 }])
 .config(function($locationProvider) {
     // Remove '#' from urls and use html5 pushstate instead

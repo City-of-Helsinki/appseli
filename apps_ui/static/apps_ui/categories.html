@@ -1,76 +1,16 @@
 <h1>Categories</h1>
 <div class='categories'>
-  <div class='category'>
-    <a href='/list'>
+  <div class='category' ng-repeat='category in categories'>
+    <a ng-href='/category/{{category.id}}'>
       <div class='category-content'>
         <div class='category--icon'>
-          <span class='glyphicon glyphicon-camera'></span>
+          <span class='glyphicon {{category.getGlyphiconClass()}}'></span>
         </div>
         <div class='category--name'>
-          Tourism
+          {{category.name | translate}}
         </div>
         <div class='category--count'>
-          20
-        </div>
-      </div>
-    </a>
-  </div>
-  <div class='category'>
-    <a href='/list'>
-      <div class='category-content'>
-        <div class='category--icon'>
-          <span class='glyphicon glyphicon-glass'></span>
-        </div>
-        <div class='category--name'>
-          Food & Drink
-        </div>
-        <div class='category--count'>
-          20
-        </div>
-      </div>
-    </a>
-  </div>
-  <div class='category'>
-    <a href='/list'>
-      <div class='category-content'>
-        <div class='category--icon'>
-          <span class='glyphicon glyphicon-picture'></span>
-        </div>
-        <div class='category--name'>
-          Culture
-        </div>
-        <div class='category--count'>
-          20
-        </div>
-      </div>
-    </a>
-  </div>
-  <div class='category'>
-    <a href='/list'>
-      <div class='category-content'>
-        <div class='category--icon'>
-          <span class='glyphicon glyphicon-plane'></span>
-        </div>
-        <div class='category--name'>
-          Transportation
-        </div>
-        <div class='category--count'>
-          20
-        </div>
-      </div>
-    </a>
-  </div>
-  <div class='category'>
-    <a href='/list'>
-      <div class='category-content'>
-        <div class='category--icon'>
-          <span class='glyphicon glyphicon-tree-conifer'></span>
-        </div>
-        <div class='category--name'>
-          Nature
-        </div>
-        <div class='category--count'>
-          20
+          {{category.applications.length}}
         </div>
       </div>
     </a>
