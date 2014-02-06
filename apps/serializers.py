@@ -22,13 +22,13 @@ class TranslatedField(serializers.Field):
 
 class SupportedPlatformSerializer(serializers.ModelSerializer):
     name = TranslatedField(source="platform.name")
-    type = serializers.Field(source='platform.type')
+    slug = serializers.Field(source='platform.slug')
     url = serializers.HyperlinkedRelatedField(view_name='platform-detail',
                                               source='platform')
 
     class Meta:
         model = models.ApplicationPlatformSupport
-        fields = ('url', 'name', 'type', 'store_url',
+        fields = ('url', 'id', 'name', 'slug', 'store_url',
                   'rating', 'nr_reviews', 'last_updated')
 
 

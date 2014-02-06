@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 RawApplicationRecord = namedtuple("RawApplicationRecord", [
     "name",
     "category_name",
-    "platform_type",
+    "platform_slug",
     "thumbnail_url",
     "description",
     "store_url",
@@ -100,17 +100,17 @@ class Command(BaseCommand):
 
 def import_legacy_data():
     # Get / create platforms
-    platforms_by_type = {}
-    for type, _ in PLATFORMS:
+    platforms_by_slug = {}
+    for slug, _ in PLATFORMS:
         try:
-            platform = Platform.objects.get(type=type)
+            platform = Platform.objects.get(slug=slug)
         except Platform.DoesNotExist:
-            platform = Platform.objects.create(name=type, type=type)
-        platforms_by_type[type] = platform
+            platform = Platform.objects.create(name=slug, slug=slug)
+        platforms_by_slug[slug] = platform
 
     for raw_application in fetch_raw_applications():
         slug = slugify(raw_application.name)
-        platform = platforms_by_type[raw_application.platform_type]
+        platform = platforms_by_slug[raw_application.platform_slug]
 
         # Get / create category
         category_slug = slugify(raw_application.category_name)
@@ -183,7 +183,7 @@ def import_legacy_data():
                 index=index,
             )
             image = fetch_file(url)
-            filename = "{0}-screenshot-{1}.{2}".format(platform.type,
+            filename = "{0}-screenshot-{1}.{2}".format(platform.slug,
                                                        index,
                                                        image.file_ext)
             screenshot.image.save(filename, image)
@@ -202,7 +202,7 @@ def fetch_raw_applications():
         for app_url in parse_application_urls(response.content):
             response = fetch(app_url, ua=user_agent)
             yield parse_application_data(response.content,
-                                              platform_type=platform)
+                                              platform_slug=platform)
 
 
 def parse_application_urls(html_content):
@@ -219,7 +219,7 @@ def clean_text(text):
     return text.strip()
 
 
-def parse_application_data(html_content, platform_type):
+def parse_application_data(html_content, platform_slug):
     logger.info("Parsing raw application data")
     soup = BeautifulSoup(html_content).find(id="single_page")
 
@@ -246,7 +246,7 @@ def parse_application_data(html_content, platform_type):
     return RawApplicationRecord(
         name=clean_text(soup.find(id="apptitle").text),
         category_name=clean_text(soup.find(id="detail-b").find("p").text),
-        platform_type=platform_type,
+        platform_slug=platform_slug,
         thumbnail_url=soup.find(id="detail-a").find("img").attrs["src"],
         description=clean_text(soup.find(id="description").text),
         store_url=store_url,

@@ -5,8 +5,8 @@ from django.utils.encoding import python_2_unicode_compatible
 
 @python_2_unicode_compatible
 class Platform(models.Model):
-    type = models.CharField(max_length=50)  # web, android, ios, wp
     name = models.CharField(max_length=100)  # translatable
+    slug = models.SlugField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
