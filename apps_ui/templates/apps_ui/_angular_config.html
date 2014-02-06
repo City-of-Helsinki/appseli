@@ -1,0 +1,6 @@
+{# Configuration that needs to be injected to angular from Django #}
+<script type="text/javascript">
+    angular.module("config", [])
+    .constant("API_ROOT", "{% url "api-root" %}")
+    .constant("STATIC_URL", "{{ STATIC_URL }}apps_ui/");
+</script>

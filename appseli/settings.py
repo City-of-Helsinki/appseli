@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'apps',
     'proto_ui',
     'angular_proto',
+    'apps_ui',
 )
 
 MIDDLEWARE_CLASSES = (

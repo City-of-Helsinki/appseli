@@ -1,0 +1,48 @@
+@grid-columns:              12;
+@grid-gutter-width:         30px;
+@grid-float-breakpoint:     768px;
+
+.g-content {
+  .container();
+}
+
+.g-footer {
+  background: #333;
+}
+
+.main-footer {
+  margin-top: 24px;
+  .container();
+}
+
+.g-apps-list {
+  .make-row();
+}
+
+// SCREEN WIDTHS xs | sm | md | lg
+.g-app-listing {
+  .make-xs-column(12);
+  .make-sm-column(6);
+  .make-lg-column(4);
+}
+
+.g-app-listing__content {
+  .make-row();
+}
+
+.g-app-listing__maininfo {
+    .make-xs-column(8);
+    .make-xs-column-push(4);
+}
+
+.g-app-listing__moreinfo {
+    .make-xs-column(4);
+    .make-xs-column-pull(8);
+}
+
+.categories {
+ .make-row();
+  .category {
+    .make-xs-column(6);
+  }  
+}

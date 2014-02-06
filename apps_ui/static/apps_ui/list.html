@@ -1,0 +1,119 @@
+<h1>Apps List</h1>
+<div class='apps-filter'>
+  <div class='filter-settings'>
+    <form class='filter-form' role='form'>
+      <h5 class='filter-header'>
+        <span class='filter-header-label'>
+          Showing:
+        </span>
+        "Helsinki", category: Tourism, platform: iOS
+        <a data-target='#j-filterbox' data-toggle='collapse' href='#'>
+          Refine >>
+        </a>
+      </h5>
+      <div class='collapse' id='j-filterbox'>
+        <div class='filter-text form-group'>
+          <label for='searchfield'>Search</label>
+          <input class='form-control' id='searchfield' placeholder='search' type='text'>
+        </div>
+        <div class='filter-tag-selections'>
+          <div class='filter-select filter-select__category form-group'>
+            <label for='category'>Category</label>
+            <select class='form-control' id='category' multiple>
+              <option selected='selected' value='1'>Travel</option>
+              <option selected='selected' value='2'>Food & drink</option>
+              <option selected='selected' value='3'>Transport</option>
+              <option selected='selected' value='4'>Culture</option>
+            </select>
+          </div>
+          <div class='filter-select filter-select__accessibility form-group'>
+            <label for='accessibility'>Accessibility</label>
+            <select class='form-control' data-native-menu='false' id='accessibility' multiple='multiple' name='accessibility'>
+              <option selected='selected' value='1'>Visually impaired</option>
+              <option selected='selected' value='2'>Limited mobility</option>
+              <option selected='selected' value='3'>Hearing problems</option>
+              <option selected='selected' value='4'>Simplified</option>
+            </select>
+          </div>
+          <div class='filter-select filter-select__platform form-group'>
+            <label for='platform'>Platform</label>
+            <select class='form-control' id='platform' multiple>
+              <option selected='selected' value='1'>iOS</option>
+              <option selected='selected' value='2'>Android</option>
+              <option selected='selected' value='3'>Windows</option>
+              <option selected='selected' value='4'>Google</option>
+            </select>
+          </div>
+          <div class='filter-select filter-select__language form-group'>
+            <label for='language'>Language</label>
+            <select class='form-control' id='language' multiple>
+              <option selected='selected' value='1'>English</option>
+              <option selected='selected' value='2'>Finnish</option>
+              <option selected='selected' value='3'>Japanese</option>
+              <option selected='selected' value='4'>Russian</option>
+            </select>
+          </div>
+          <div class='filter-select filter-select__rating form-group'>
+            <label for='rating'>Minimum Rating</label>
+            <select class='form-control' id='rating'>
+              <option selected='selected' value='1'>1</option>
+              <option value='2'>2</option>
+              <option value='3'>3</option>
+              <option value='4'>4</option>
+              <option value='4'>5</option>
+            </select>
+          </div>
+          <div class='filter-select filter-select__submit form-group'>
+            <button class='btn btn-warning' type='button'>Reset</button>
+            <button class='btn btn-primary' type='button'>Filter</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class='apps-list'>
+  <div class='apps-list__sort'>
+    <form class='form-horizontal' role='form'>
+      <div class='form-group'>
+        <label class='control-label' for='sort-method'>Sort List</label>
+        <select class='form-control' id='sort-method'>
+          <option value=''>Date added</option>
+          <option value=''>Rating</option>
+          <option value=''>Alphabetical</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class='g-apps-list'>
+    <div class='g-app-listing' ng-repeat='application in applications'>
+      <div class='app-listing'>
+        <div class='g-app-listing__content'>
+          <div class='g-app-listing__maininfo'>
+            <h3 class='app-listing__name'>
+              <a class='app-link' href='/application/{{application.id}}'>{{application.name | translate}}</a>
+            </h3>
+            <div class='app-listing__description'>
+              {{application.description | translate | truncate:200}}
+            </div>
+          </div>
+          <div class='g-app-listing__moreinfo'>
+            <div class='app-listing__icon'>
+              <img ng-src='{{application.image}}'>
+            </div>
+            <div class='app-listing__rating'>
+              <div ng-init='ratingRange = [0.5, 1.5, 2.5, 3.5, 4.5]'><span class='glyphicon glyphicon-star' ng-if='application.rating &gt; val' ng-repeat='val in ratingRange'></span><span class='glyphicon glyphicon-star-empty' ng-if='application.rating &lt; val' ng-repeat='val in ratingRange'></span>
+              </div>
+            </div>
+            <div class='app-listing__tags'>
+              Category:
+              <ul class='taglist'>
+                <li class='taglist__tag'>{{application.category.name | translate}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

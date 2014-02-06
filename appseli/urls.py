@@ -23,3 +23,7 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT
     )
+
+urlpatterns += patterns('',
+    url(r'^', include("apps_ui.urls")),
+)

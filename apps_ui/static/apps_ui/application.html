@@ -1,0 +1,102 @@
+<div ng-if='application'>
+  <div class='app__header'>
+    <h2 class='app__name'>
+      {{application.name | translate}}
+    </h2>
+    <div class='app__publisher'>
+      {{application.vendor}}
+    </div>
+    <div class='app__short-description'>
+      {{application.description | translate | truncate:200}}
+    </div>
+  </div>
+  <div class='app__details'>
+    <div class='app_details__first'>
+      <div class='app__icon'>
+        <img ng-src='{{application.image}}'>
+      </div>
+    </div>
+    <div class='app_details__second'>
+      <div class='app__rating'>
+        Rating:
+        <div ng-init='ratingRange = [0.5, 1.5, 2.5, 3.5, 4.5]'><span class='glyphicon glyphicon-star' ng-if='application.rating &gt; val' ng-repeat='val in ratingRange'></span><span class='glyphicon glyphicon-star-empty' ng-if='application.rating &lt; val' ng-repeat='val in ratingRange'></span>
+        </div>
+      </div>
+      <div class='app__languages'>
+        Category
+        <ul class='language-list'>
+          <li class='language-list__language'>{{application.category.name | translate}}</li>
+        </ul>
+      </div>
+      <div class='app__languages'>
+        Languages
+        <ul class='language-list'>
+          <li class='language-list__language' ng-repeat='language in application.languages'>{{language}}</li>
+        </ul>
+      </div>
+      <div class='app__languages'>
+        Accessibility
+        <ul class='language-list'>
+          <li class='language-list__language'>Restricted Mobility</li>
+          <li class='language-list__language'>Hearing</li>
+        </ul>
+      </div>
+      <div class='app__languages'>
+        Web connection required
+      </div>
+      <div class='app__version'>
+        Version
+        2.2.2.0
+      </div>
+      <div class='app__updated'>
+        Updated
+        31.1.2014
+      </div>
+    </div>
+    <div class='app__platforms'>
+      <ul class='platform-list'>
+        <li class='platform-list__platform platform-list__platform--ios'>
+          <a a class='platform__download' href='#'>iOS</a>
+        </li>
+        <li class='platform-list__platform platform-list__platform--android'>
+          <a a class='platform__download' href='#'>Android</a>
+        </li>
+        <li class='platform-list__platform platform-list__platform--windows'>
+          <a a class='platform__download' href='#'>Windows</a>
+        </li>
+      </ul>
+      <div class='app__links'>
+        <div class='app__link app-link--publisherwebsite'>
+          <a href='#'>Publisher Website &gt;&gt;</a>
+        </div>
+        <div class='app-link app-link--support'>
+          <a href='{{application.support_link}}'>Support Website &gt;&gt;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='app__long-description'>
+    {{application.description | translate}}
+  </div>
+  <div class='app__screenshots'>
+    <div class='carousel slide' data-ride='carousel' id='j-screenshots-carousel'>
+      <!-- Indicators -->
+      <ol class='carousel-indicators'>
+        <li data-slide-to='{{$index}}' data-target='#j-screenshots-carousel' ng-class='{active: $index == 0}' ng-repeat='screenshot in application.screenshots'></li>
+      </ol>
+      <!-- Wrapper for slides -->
+      <div class='carousel-inner'>
+        <div class='item' ng-class='{active: $index == 0}' ng-repeat='screenshot in application.screenshots'>
+          <img alt='Screenshot' ng-src='{{ screenshot.image }}'>
+        </div>
+      </div>
+      <!-- Controls -->
+      <a class='left carousel-control' data-slide='prev' data-target='#j-screenshots-carousel'>
+        <span class='glyphicon glyphicon-chevron-left'></span>
+      </a>
+      <a class='right carousel-control' data-slide='next' data-target='#j-screenshots-carousel'>
+        <span class='glyphicon glyphicon-chevron-right'></span>
+      </a>
+    </div>
+  </div>
+</div>
