@@ -1,7 +1,7 @@
 %h1 Categories
 .categories
   .category(ng-repeat="category in categories")
-    %a(ng-href="/category/{{category.id}}")
+    %a(ng-href="/list/?category={{category.slug}}")
       .category-content
         .category--icon
           %span(class="glyphicon {{category.getGlyphiconClass()}}")

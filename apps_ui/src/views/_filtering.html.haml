@@ -1,56 +1,50 @@
-
 .filter-settings
   %form.filter-form(role="form")
     %h5.filter-header
       %span.filter-header-label
-        Showing: 
-      "Helsinki", category: Tourism, platform: iOS
-      %a(href="#" data-toggle="collapse" data-target="#j-filterbox")
-        Refine >>
+        Showing:
+        %span(ng-repeat="part in ['search', 'category', 'accessibility', 'language', 'platform', 'min_rating']" ng-if="filter[part]")
+          {{part}}: {{filter[part].join(", ")}}
+      -#"Helsinki", category: Tourism, platform: iOS
+      %a(data-toggle="collapse" data-target="#j-filterbox")
+        Refine &gt;&gt;
     #j-filterbox.collapse
       .filter-text.form-group
         %label(for="searchfield") Search
-        %input.form-control#searchfield(type="text" placeholder="search")
+        %input.form-control#searchfield(type="text" placeholder="search" ng-model="filter.search")
       .filter-tag-selections
         .filter-select.filter-select__category.form-group
           %label(for="category") Category
-          %select.form-control#category(multiple)
-            %option(value="1" selected="selected") Travel
-            %option(value="2" selected="selected") Food & drink
-            %option(value="3" selected="selected") Transport
-            %option(value="4" selected="selected") Culture
+          %select.form-control#category(multiple ng-model="filter.category")
+            %option(ng-repeat="category in categories" value="{{category.slug}}") {{category.name | translate}}
         .filter-select.filter-select__accessibility.form-group
+          -# TODO
           %label(for="accessibility") Accessibility
-          %select.form-control#accessibility(name="accessibility" multiple="multiple" data-native-menu="false")
-            %option(value="1" selected="selected") Visually impaired
-            %option(value="2" selected="selected") Limited mobility
-            %option(value="3" selected="selected") Hearing problems
-            %option(value="4" selected="selected") Simplified 
+          %select.form-control#accessibility(ng-model="filter.accessibility" multiple data-native-menu="false")
+            %option(value="1") Visually impaired
+            %option(value="2") Limited mobility
+            %option(value="3") Hearing problems
+            %option(value="4") Simplified
         .filter-select.filter-select__platform.form-group
           %label(for="platform") Platform
-          %select.form-control#platform(multiple)
-            %option(value="1" selected="selected") iOS
-            %option(value="2" selected="selected") Android
-            %option(value="3" selected="selected") Windows
-            %option(value="4" selected="selected") Google
+          %select.form-control#platform(multiple ng-model="filter.platform")
+            %option(value="{{platform.slug}}" ng-repeat="platform in platforms") {{platform.name | translate}}
         .filter-select.filter-select__language.form-group
           %label(for="language") Language
-          %select.form-control#language(multiple)
-            %option(value="1" selected="selected") English
-            %option(value="2" selected="selected") Finnish
-            %option(value="3" selected="selected") Japanese
-            %option(value="4" selected="selected") Russian
+          %select.form-control#language(multiple ng-model="filter.language")
+            %option(value="en") English
+            %option(value="fi") Finnish
+            %option(value="sv") Swedish
+            %option(value="ru") Russian
         .filter-select.filter-select__rating.form-group
           %label(for="rating") Minimum Rating
-          %select.form-control#rating
-            %option(value="1" selected="selected") 1
+          %select.form-control#rating(ng-model="filter.min_rating")
+            %option(value="0" selected) 0
+            %option(value="1") 1
             %option(value="2") 2
             %option(value="3") 3
             %option(value="4") 4
-            %option(value="4") 5       
+            %option(value="5") 5
         .filter-select.filter-select__submit.form-group
-          %button.btn.btn-warning(type="button") Reset
-          %button.btn.btn-primary(type="button") Filter
-                
-                
-          
+          %button.btn.btn-warning(type="button" ng-click="resetFilter()") Reset
+          %button.btn.btn-primary(type="button" ng-click="doFilter()") Filter

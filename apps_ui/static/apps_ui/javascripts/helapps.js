@@ -31,10 +31,10 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
         return field[lang] || field["en"];
     }
 }])
-.factory("Applications", ["$resource", "API_ROOT", function($resource, API_ROOT) {
+.factory("Applications", function($resource, API_ROOT) {
     return $resource(API_ROOT + "application/:id/");
-}])
-.factory("Categories", ["$resource", "API_ROOT", function($resource, API_ROOT) {
+})
+.factory("Categories", function($resource, API_ROOT) {
     var Categories = $resource(API_ROOT + "category/:id/");
     var glyphicons = {
         "travel-local": "glyphicon-camera",
@@ -53,7 +53,10 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
     };
     return Categories;
 
-}])
+})
+.factory("Platforms", function($resource, API_ROOT) {
+    return $resource(API_ROOT + "platform/:id/");
+})
 .config(function($locationProvider) {
     // Remove '#' from urls and use html5 pushstate instead
     $locationProvider.html5Mode(true);
@@ -83,18 +86,31 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
             redirectTo: "/"
         });
 }])
-.controller("ApplicationListCtrl", ["$scope", "Applications", function($scope, Applications) {
-    $scope.applications = Applications.query();
-}])
-.controller("ApplicationCtrl", ["$scope", "$routeParams", "Applications", function($scope, $routeParams, Applications) {
-    var application = Applications.get({id:$routeParams.applicationId});
-    application.$promise.then(function() {
+.controller("ApplicationListCtrl", function($scope, $location, Applications, Categories, Platforms) {
+    $scope.filter = {};
+    angular.extend($scope.filter, $location.search()); // filter by GET parameters
+    $scope.applications = Applications.query($scope.filter);
+
+    // Filtering
+    $scope.categories = Categories.query();
+    $scope.platforms = Platforms.query();
+
+    $scope.doFilter = function() {
+        $scope.applications = Applications.query($scope.filter);
+    };
+    $scope.resetFilter = function() {
+        $scope.filter = {};
+        $scope.doFilter();
+    };
+})
+.controller("ApplicationCtrl", function($scope, $routeParams, Applications) {
+    var application = Applications.get({id: $routeParams.applicationId}, function() {
         $scope.application = application;
     });
-}])
-.controller("CategoryListCtrl", ["$scope", "Categories", function($scope, Categories) {
+})
+.controller("CategoryListCtrl", function($scope, Categories) {
     $scope.categories = Categories.query();
-}])
+})
 .controller("InfoCtrl", function() {
 });
 
