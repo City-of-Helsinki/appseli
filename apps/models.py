@@ -23,11 +23,13 @@ class Application(models.Model):
     platforms = models.ManyToManyField('Platform',
                                        related_name='applications',
                                        through='ApplicationPlatformSupport')
+    short_description = models.TextField(blank=True)  # translatable
     description = models.TextField()  # translatable
     vendor = models.CharField(max_length=100)  # should be ForeignKey?
     publish_date = models.DateTimeField()
     rating = models.FloatField()  # should be calculated automatically?
-    support_link = models.CharField(max_length=200, blank=True)
+    publisher_url = models.CharField(max_length=200, blank=True)
+    support_url = models.CharField(max_length=200, blank=True)
     contact_email = models.EmailField(max_length=254, blank=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()

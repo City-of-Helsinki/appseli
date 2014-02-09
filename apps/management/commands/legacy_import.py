@@ -54,7 +54,7 @@ RawApplicationRecord = namedtuple("RawApplicationRecord", [
     "screenshot_urls",
     "publisher_name",
     "publish_date",
-    "support_link",
+    "support_url",
     "contact_email",
 ])
 
@@ -125,15 +125,17 @@ def import_legacy_data():
             application = Application.objects.get(slug=slug)
         except Application.DoesNotExist:
             # This data is only saved once
+            short_description = " ".join(raw_application.description.split()[:25]) + "..."
             application = Application.objects.create(
                 name=raw_application.name,
                 slug=slug,
                 category=category,
+                short_description=short_description,
                 description=raw_application.description,
                 vendor=raw_application.publisher_name,
                 publish_date=raw_application.publish_date,
                 rating=0.0,
-                support_link=raw_application.support_link,
+                support_url=raw_application.support_url,
                 contact_email=raw_application.contact_email,
             )
             image = fetch_file(raw_application.thumbnail_url)
@@ -231,7 +233,7 @@ def parse_application_data(html_content, platform_slug):
         contact_email = contact_email.split(":", 1)[1]  # mailto:
         contact_email = contact_email.rsplit("?", 1)[0]  # ?subject=blahblah
     _support_elem = soup.find(**{"data-icon": "appstore-support"})
-    support_link = _support_elem.attrs["href"] if _support_elem else ""
+    support_url = _support_elem.attrs["href"] if _support_elem else ""
 
     # The download url is a local page that redirects to the actual app store /
     # etc page. Resolve it to the actual url (requires an HTTP request)
@@ -257,7 +259,7 @@ def parse_application_data(html_content, platform_slug):
         publisher_name=clean_text(_table_rows[0].findAll("td")[1].text),
         publish_date=publish_date,
         contact_email=contact_email,
-        support_link=support_link,
+        support_url=support_url,
     )
 
 
