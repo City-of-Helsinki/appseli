@@ -5,19 +5,13 @@ from django.utils.encoding import python_2_unicode_compatible
 
 
 @python_2_unicode_compatible
-class Platform(models.Model):
-    name = models.CharField(max_length=100)  # translatable
-    slug = models.SlugField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
 class Application(models.Model):
     name = models.CharField(max_length=100)  # translatable
     slug = models.SlugField(max_length=100, unique=True)
     categories = models.ManyToManyField('Category',
                                         related_name='applications')
+    accessibilities = models.ManyToManyField('Accessibility',
+                                             related_name='applications')
     platforms = models.ManyToManyField('Platform',
                                        related_name='applications',
                                        through='ApplicationPlatformSupport')
@@ -48,12 +42,28 @@ class Application(models.Model):
 
 
 @python_2_unicode_compatible
-class Category(models.Model):
+class BaseTag(models.Model):
+    """Base class for tag-like m2m relations from Application"""
     name = models.CharField(max_length=100)  # translatable
     slug = models.SlugField(max_length=100, unique=True)
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.name
+
+
+class Platform(BaseTag):
+    pass
+
+
+class Category(BaseTag):
+    pass
+
+
+class Accessibility(BaseTag):
+    pass
 
 
 @python_2_unicode_compatible

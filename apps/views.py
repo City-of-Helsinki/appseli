@@ -40,3 +40,8 @@ class PlatformViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = models.Category.objects.all()
     serializer_class = serializers.CategorySerializer
+
+
+class AccessibilityViewSet(viewsets.ModelViewSet):
+    queryset = models.Accessibility.objects.all()
+    serializer_class = serializers.AccessibilitySerializer

@@ -2,16 +2,13 @@ from modeltranslation.translator import translator, TranslationOptions
 from apps.models import *
 
 
-class PlatformTranslationOptions(TranslationOptions):
-    fields = ('name',)
-translator.register(Platform, PlatformTranslationOptions)
-
-
 class ApplicationTranslationOptions(TranslationOptions):
     fields = ('name', 'description')
 translator.register(Application, ApplicationTranslationOptions)
 
 
-class CategoryTranslationOptions(TranslationOptions):
+class BaseTagTranslationOptions(TranslationOptions):
     fields = ('name',)
-translator.register(Category, CategoryTranslationOptions)
+translator.register(Platform, BaseTagTranslationOptions)
+translator.register(Category, BaseTagTranslationOptions)
+translator.register(Accessibility, BaseTagTranslationOptions)

@@ -7,6 +7,7 @@ router = DefaultRouter()
 router.register(r'application', views.ApplicationViewSet)
 router.register(r'platform', views.PlatformViewSet)
 router.register(r'category', views.CategoryViewSet)
+router.register(r'accessibility', views.AccessibilityViewSet)
 
 
 urlpatterns =  patterns('',

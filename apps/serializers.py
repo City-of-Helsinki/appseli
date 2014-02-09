@@ -25,7 +25,25 @@ def get_full_image_url(self, obj):
     return request.build_absolute_uri(obj.image.url)
 
 
+def create_tag_serializer(model_class):
+    class TagSerializer(serializers.HyperlinkedModelSerializer):
+        name = TranslatedField()
+
+        class Meta:
+            model = model_class
+            fields = ('url', 'id', 'name', 'slug', 'applications')
+    return TagSerializer
+
+
+CategorySerializer = create_tag_serializer(models.Category)
+PlatformSerializer = create_tag_serializer(models.Platform)
+AccessibilitySerializer = create_tag_serializer(models.Accessibility)
+
+
 class SupportedPlatformSerializer(serializers.ModelSerializer):
+    """
+    PlatformSerializer with custom fields from ApplicationPlatformSupport
+    """
     name = TranslatedField(source="platform.name")
     slug = serializers.Field(source='platform.slug')
     url = serializers.HyperlinkedRelatedField(view_name='platform-detail',
@@ -35,14 +53,6 @@ class SupportedPlatformSerializer(serializers.ModelSerializer):
         model = models.ApplicationPlatformSupport
         fields = ('url', 'id', 'name', 'slug', 'store_url',
                   'rating', 'nr_reviews', 'last_updated')
-
-
-class CategorySerializer(serializers.HyperlinkedModelSerializer):
-    name = TranslatedField()
-
-    class Meta:
-        model = models.Category
-        fields = ('url', 'id', 'name', 'slug', 'applications')
 
 
 class ScreenshotSerializer(serializers.ModelSerializer):
@@ -79,11 +89,3 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
                   'contact_email', 'created', 'modified',)
 
     get_full_image_url = get_full_image_url
-
-
-class PlatformSerializer(serializers.HyperlinkedModelSerializer):
-    name = TranslatedField()
-
-    class Meta:
-        model = models.Platform
-        fields = ('url', 'id', 'name', 'slug', 'applications')
