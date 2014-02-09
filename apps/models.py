@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 
@@ -28,10 +29,19 @@ class Application(models.Model):
     rating = models.FloatField()  # should be calculated automatically?
     support_link = models.CharField(max_length=200, blank=True)
     contact_email = models.EmailField(max_length=254, blank=True)
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
 
     def _get_upload_path(instance, filename):
         return 'apps/{}/{}'.format(instance.slug, filename)
     image = models.ImageField(upload_to=_get_upload_path)
+
+    def save(self, *args, **kwargs):
+        now = timezone.now()
+        if not self.id:
+            self.created = now
+        self.modified = now
+        return super(Application, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name

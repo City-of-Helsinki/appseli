@@ -28,8 +28,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                      "description_fi", "description_en",
                      "description_sv", "description_ru",
                      "vendor")
-    ordering_fields = ("publish_date",)
-    #oredring = ("created",)
+    ordering_fields = ("publish_date", "created", "modified")
+    ordering = ("created",)
 
 
 class PlatformViewSet(viewsets.ModelViewSet):

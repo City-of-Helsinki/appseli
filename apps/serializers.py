@@ -73,9 +73,10 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.Application
-        fields = ('url', 'id', 'name', 'slug', 'description', 'category', 'image',
-                  'vendor', 'rating', 'publish_date', 'support_link',
-                  'contact_email', 'platforms', 'languages', 'screenshots')
+        fields = ('url', 'id', 'name', 'slug', 'categories', 'accessibilities',
+                  'platforms', 'description', 'vendor',
+                  'publish_date', 'rating', 'publisher_url', 'support_link',
+                  'contact_email', 'created', 'modified',)
 
     get_full_image_url = get_full_image_url
 
