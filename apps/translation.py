@@ -3,7 +3,7 @@ from apps.models import *
 
 
 class ApplicationTranslationOptions(TranslationOptions):
-    fields = ('name', 'description')
+    fields = ('name', 'short_description', 'description')
 translator.register(Application, ApplicationTranslationOptions)
 
 
