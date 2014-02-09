@@ -129,7 +129,6 @@ def import_legacy_data():
             application = Application.objects.create(
                 name=raw_application.name,
                 slug=slug,
-                category=category,
                 short_description=short_description,
                 description=raw_application.description,
                 vendor=raw_application.publisher_name,
@@ -140,6 +139,7 @@ def import_legacy_data():
             )
             image = fetch_file(raw_application.thumbnail_url)
             application.image.save("icon.{0}".format(image.file_ext), image)
+            application.categories.add(category)
 
         # Get / create platform support
         supports_with_same_app = ApplicationPlatformSupport.objects.filter(

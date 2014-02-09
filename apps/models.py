@@ -13,13 +13,11 @@ class Platform(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class Application(models.Model):
     name = models.CharField(max_length=100)  # translatable
     slug = models.SlugField(max_length=100, unique=True)
-    category = models.ForeignKey('Category',
-                                 related_name='applications',
-                                 null=True)
+    categories = models.ManyToManyField('Category',
+                                        related_name='applications')
     platforms = models.ManyToManyField('Platform',
                                        related_name='applications',
                                        through='ApplicationPlatformSupport')
@@ -51,7 +49,6 @@ class Application(models.Model):
 
 @python_2_unicode_compatible
 class Category(models.Model):
-    # should be a tag instead? (m2m relationship)
     name = models.CharField(max_length=100)  # translatable
     slug = models.SlugField(max_length=100, unique=True)
 
