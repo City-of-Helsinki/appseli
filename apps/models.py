@@ -26,6 +26,7 @@ class Application(models.Model):
     publisher_url = models.CharField(max_length=200, blank=True)
     support_url = models.CharField(max_length=200, blank=True)
     contact_email = models.EmailField(max_length=254, blank=True)
+    version = models.CharField(max_length=100, blank=True)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()
 
