@@ -9,10 +9,13 @@ class Application(models.Model):
     name = models.CharField(max_length=100)  # translatable
     slug = models.SlugField(max_length=100, unique=True)
     categories = models.ManyToManyField('Category',
+                                        blank=True,
                                         related_name='applications')
     accessibilities = models.ManyToManyField('Accessibility',
+                                             blank=True,
                                              related_name='applications')
     platforms = models.ManyToManyField('Platform',
+                                       blank=True,
                                        related_name='applications',
                                        through='ApplicationPlatformSupport')
     short_description = models.TextField(blank=True)  # translatable
