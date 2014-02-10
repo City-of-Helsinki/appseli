@@ -5,8 +5,8 @@
       <h5 class='filter-header'>
         <span class='filter-header-label'>
           Showing:
-          <span ng-if='filter[part]' ng-repeat="part in ['search', 'category', 'accessibility', 'language', 'platform', 'min_rating']">
-            {{part}}: {{filter[part].join(", ")}}
+          <span ng-if='appliedFilter[part]' ng-repeat="part in ['search', 'category', 'accessibility', 'language', 'platform', 'min_rating']">
+            {{part}}: {{appliedFilter[part].join(", ")}}
           </span>
         </span>
         <a data-target='#j-filterbox' data-toggle='collapse'>
@@ -28,16 +28,17 @@
           <div class='filter-select filter-select__accessibility form-group'>
             <label for='accessibility'>Accessibility</label>
             <select class='form-control' data-native-menu='false' id='accessibility' multiple ng-model='filter.accessibility'>
-              <option value='1'>Visually impaired</option>
-              <option value='2'>Limited mobility</option>
-              <option value='3'>Hearing problems</option>
-              <option value='4'>Simplified</option>
+              <option ng-repeat='accessibility in accessibilities' value='{{accessibility.slug}}'>
+                {{accessibility.name | translate}}
+              </option>
             </select>
           </div>
           <div class='filter-select filter-select__platform form-group'>
             <label for='platform'>Platform</label>
             <select class='form-control' id='platform' multiple ng-model='filter.platform'>
-              <option ng-repeat='platform in platforms' value='{{platform.slug}}'>{{platform.name | translate}}</option>
+              <option ng-repeat='platform in platforms' value='{{platform.slug}}'>
+                {{platform.name | translate}}
+              </option>
             </select>
           </div>
           <div class='filter-select filter-select__language form-group'>
@@ -75,7 +76,7 @@
       <div class='form-group'>
         <label class='control-label' for='sort-method'>Sort List</label>
         <select class='form-control' id='sort-method' ng-model='sortProp'>
-          <option value='-publish_date'>Date added</option>
+          <option value='-created'>Date added</option>
           <option value='-rating'>Rating</option>
           <option value='name.fi'>Alphabetical</option>
         </select>
@@ -91,7 +92,7 @@
               <a class='app-link' href='/application/{{application.id}}'>{{application.name | translate}}</a>
             </h3>
             <div class='app-listing__description'>
-              {{application.description | translate | truncate:200}}
+              {{application.short_description | translate}}
             </div>
           </div>
           <div class='g-app-listing__moreinfo'>
@@ -105,7 +106,9 @@
             <div class='app-listing__tags'>
               Category:
               <ul class='taglist'>
-                <li class='taglist__tag'>{{application.category.name | translate}}</li>
+                <li class='taglist__tag' ng-repeat='category in application.categories'>
+                  {{category.name | translate}}
+                </li>
               </ul>
             </div>
           </div>

@@ -4,8 +4,7 @@
       %h3.app-listing__name
         %a.app-link(href="/application/{{application.id}}") {{application.name | translate}}
       .app-listing__description
-        -# TODO: actual short description
-        {{application.description | translate | truncate:200}}
+        {{application.short_description | translate}}
     .g-app-listing__moreinfo
       .app-listing__icon
         %img(ng-src="{{application.image}}")
@@ -13,5 +12,5 @@
       .app-listing__tags
         Category:
         %ul.taglist
-          -# TODO: implement m2m categories
-          %li.taglist__tag {{application.category.name | translate}}
+          %li.taglist__tag(ng-repeat="category in application.categories")
+            {{category.name | translate}}

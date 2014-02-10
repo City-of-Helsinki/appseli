@@ -3,8 +3,8 @@
     %h5.filter-header
       %span.filter-header-label
         Showing:
-        %span(ng-repeat="part in ['search', 'category', 'accessibility', 'language', 'platform', 'min_rating']" ng-if="filter[part]")
-          {{part}}: {{filter[part].join(", ")}}
+        %span(ng-repeat="part in ['search', 'category', 'accessibility', 'language', 'platform', 'min_rating']" ng-if="appliedFilter[part]")
+          {{part}}: {{appliedFilter[part].join(", ")}}
       -#"Helsinki", category: Tourism, platform: iOS
       %a(data-toggle="collapse" data-target="#j-filterbox")
         Refine &gt;&gt;
@@ -18,17 +18,15 @@
           %select.form-control#category(multiple ng-model="filter.category")
             %option(ng-repeat="category in categories" value="{{category.slug}}") {{category.name | translate}}
         .filter-select.filter-select__accessibility.form-group
-          -# TODO
           %label(for="accessibility") Accessibility
           %select.form-control#accessibility(ng-model="filter.accessibility" multiple data-native-menu="false")
-            %option(value="1") Visually impaired
-            %option(value="2") Limited mobility
-            %option(value="3") Hearing problems
-            %option(value="4") Simplified
+            %option(ng-repeat="accessibility in accessibilities" value="{{accessibility.slug}}")
+              {{accessibility.name | translate}}
         .filter-select.filter-select__platform.form-group
           %label(for="platform") Platform
           %select.form-control#platform(multiple ng-model="filter.platform")
-            %option(value="{{platform.slug}}" ng-repeat="platform in platforms") {{platform.name | translate}}
+            %option(value="{{platform.slug}}" ng-repeat="platform in platforms")
+              {{platform.name | translate}}
         .filter-select.filter-select__language.form-group
           %label(for="language") Language
           %select.form-control#language(multiple ng-model="filter.language")

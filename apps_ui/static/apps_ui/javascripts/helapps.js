@@ -14,6 +14,17 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
         }
     };
 })
+.filter("langCodeToName", function () {
+    var codeMap = {
+        en: "English",
+        fi: "Finnish",
+        sv: "Swedish",
+        ru: "Russian",
+    };
+    return function (code) {
+        return codeMap[code] || code;
+    };
+})
 .factory("languageService", ["$locale", function($locale) {
     var language = $locale.id.split("-")[0];
     return {
@@ -57,9 +68,16 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
 .factory("Platforms", function($resource, API_ROOT) {
     return $resource(API_ROOT + "platform/:id/");
 })
+.factory("Accessibilities", function($resource, API_ROOT) {
+    return $resource(API_ROOT + "accessibility/:id/");
+})
 .config(function($locationProvider) {
     // Remove '#' from urls and use html5 pushstate instead
     $locationProvider.html5Mode(true);
+})
+.config(function($compileProvider) {
+    // Don't add "unsafe" to market / app store protocol urls
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|market|itms-apps):/);
 })
 .config(["$routeProvider", "STATIC_URL", function($routeProvider, STATIC_URL) {
     $routeProvider
@@ -79,24 +97,28 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
             templateUrl: STATIC_URL + "categories.html"
         })
         .when("/info/", {
-            controller: "InfoCtrl",
             templateUrl: STATIC_URL + "info.html"
         })
         .otherwise({
             redirectTo: "/"
         });
 }])
-.controller("ApplicationListCtrl", function($scope, $location, Applications, Categories, Platforms) {
-    $scope.filter = {};
+.controller("ApplicationListCtrl", function($scope, $location,
+                                            Applications, Categories, Platforms, Accessibilities) {
+    $scope.filter = {}, $scope.appliedFilter = {};
     angular.extend($scope.filter, $location.search()); // filter by GET parameters
+    angular.extend($scope.appliedFilter, $scope.filter);
     $scope.applications = Applications.query($scope.filter);
 
     // Filtering
     $scope.categories = Categories.query();
     $scope.platforms = Platforms.query();
+    $scope.accessibilities = Accessibilities.query();
 
     $scope.doFilter = function() {
         $scope.applications = Applications.query($scope.filter);
+        $scope.appliedFilter = {};
+        angular.extend($scope.appliedFilter, $scope.filter);
     };
     $scope.resetFilter = function() {
         $scope.filter = {};
@@ -110,29 +132,4 @@ angular.module("apps", ["ngRoute", "ngResource", "config"])
 })
 .controller("CategoryListCtrl", function($scope, Categories) {
     $scope.categories = Categories.query();
-})
-.controller("InfoCtrl", function() {
 });
-
-// TODO: this doesn't seem to work -- fix it
-/*
-$(document).ready(function() {
-    var imageHeight, wrapperHeight, overlap, container = $('.image--responsive');
-
-    function centerImage() {
-        imageHeight = container.find('img').height();
-        wrapperHeight = container.height();
-        overlap = (wrapperHeight - imageHeight) / 2;
-        container.find('img').css('margin-top', overlap);
-    }
-
-    $(window).on("load resize", centerImage);
-
-    var el = document.getElementById('wrapper');
-    if (el && el.addEventListener) {
-        el.addEventListener("webkitTransitionEnd", centerImage, false); // Webkit event
-        el.addEventListener("transitionend", centerImage, false); // FF event
-        el.addEventListener("oTransitionEnd", centerImage, false); // Opera event
-    }
-});
-*/

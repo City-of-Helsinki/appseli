@@ -55,6 +55,16 @@ class SupportedPlatformSerializer(serializers.ModelSerializer):
                   'rating', 'nr_reviews', 'last_updated')
 
 
+class SupportedCategorySerializer(CategorySerializer):
+    class Meta(CategorySerializer.Meta):
+        fields = ('url', 'id', 'name', 'slug')
+
+
+class SupportedAccessibilitySerializer(AccessibilitySerializer):
+    class Meta(CategorySerializer.Meta):
+        fields = ('url', 'id', 'name', 'slug')
+
+
 class ScreenshotSerializer(serializers.ModelSerializer):
     platform = serializers.Field(source='platform.slug')
     image = serializers.SerializerMethodField('get_full_image_url')
@@ -68,6 +78,7 @@ class ScreenshotSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
     name = TranslatedField()
+    short_description = TranslatedField()
     description = TranslatedField()
     platforms = SupportedPlatformSerializer(source='applicationplatformsupport_set',
                                             read_only=True,
@@ -76,16 +87,18 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
                                              read_only=True,
                                              slug_field='language')
     image = serializers.SerializerMethodField('get_full_image_url')
-    category = CategorySerializer(read_only=True)
+    categories = SupportedCategorySerializer(read_only=True)
+    accessibilities = SupportedAccessibilitySerializer(read_only=True)
     screenshots = ScreenshotSerializer(source="applicationscreenshot_set",
                                        many=True,
                                        read_only=True)
 
     class Meta:
         model = models.Application
-        fields = ('url', 'id', 'name', 'slug', 'categories', 'accessibilities',
-                  'platforms', 'short_description', 'description', 'vendor',
-                  'publish_date', 'rating', 'publisher_url', 'support_url',
-                  'contact_email', 'created', 'modified',)
+        fields = ('url', 'id', 'name', 'slug', 'image', 'short_description',
+                  'description', 'vendor', 'publish_date', 'rating',
+                  'publisher_url', 'support_url', 'contact_email', 'created',
+                  'modified', 'languages', 'categories', 'accessibilities',
+                  'platforms','screenshots')
 
     get_full_image_url = get_full_image_url

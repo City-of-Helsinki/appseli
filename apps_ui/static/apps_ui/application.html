@@ -7,7 +7,7 @@
       {{application.vendor}}
     </div>
     <div class='app__short-description'>
-      {{application.description | translate | truncate:200}}
+      {{application.short_description | translate}}
     </div>
   </div>
   <div class='app__details'>
@@ -22,55 +22,49 @@
         <div ng-init='ratingRange = [0.5, 1.5, 2.5, 3.5, 4.5]'><span class='glyphicon glyphicon-star' ng-if='application.rating &gt; val' ng-repeat='val in ratingRange'></span><span class='glyphicon glyphicon-star-empty' ng-if='application.rating &lt; val' ng-repeat='val in ratingRange'></span>
         </div>
       </div>
-      <div class='app__languages'>
-        Category
+      <div class='app__languages' ng-if='application.categories.length'>
+        Categories
         <ul class='language-list'>
-          <li class='language-list__language'>{{application.category.name | translate}}</li>
+          <li class='language-list__language' ng-repeat='category in application.categories'>
+            {{category.name | translate}}
+          </li>
         </ul>
       </div>
-      <div class='app__languages'>
+      <div class='app__languages' ng-if='application.languages.length'>
         Languages
         <ul class='language-list'>
-          <li class='language-list__language' ng-repeat='language in application.languages'>{{language}}</li>
+          <li class='language-list__language' ng-repeat='language in application.languages'>
+            {{language | langCodeToName}}
+          </li>
         </ul>
       </div>
-      <div class='app__languages'>
+      <div class='app__languages' ng-if='application.accessibilities.length'>
         Accessibility
         <ul class='language-list'>
-          <li class='language-list__language'>Restricted Mobility</li>
-          <li class='language-list__language'>Hearing</li>
+          <li class='language-list__language' ng-repeat='accessibility in application.accessibilities'>
+            {{accessibility.name | translate}}
+          </li>
         </ul>
       </div>
-      <div class='app__languages'>
-        Web connection required
-      </div>
-      <div class='app__version'>
-        Version
-        2.2.2.0
+      <div class='app__version' ng-if='application.version'>
+        Version {{application.version}}
       </div>
       <div class='app__updated'>
-        Updated
-        31.1.2014
+        Updated {{application.modified | date:"dd.MM.yyyy"}}
       </div>
     </div>
     <div class='app__platforms'>
       <ul class='platform-list'>
-        <li class='platform-list__platform platform-list__platform--ios'>
-          <a a class='platform__download' href='#'>iOS</a>
-        </li>
-        <li class='platform-list__platform platform-list__platform--android'>
-          <a a class='platform__download' href='#'>Android</a>
-        </li>
-        <li class='platform-list__platform platform-list__platform--windows'>
-          <a a class='platform__download' href='#'>Windows</a>
+        <li class='platform-list__platform platform-list__platform--{{platform.slug}}' ng-repeat='platform in application.platforms'>
+          <a class='platform__download' href='{{platform.store_url}}'>{{platform.name | translate}}</a>
         </li>
       </ul>
       <div class='app__links'>
         <div class='app__link app-link--publisherwebsite'>
-          <a href='#'>Publisher Website &gt;&gt;</a>
+          <a href='{{application.publisher_url}}'>Publisher Website &gt;&gt;</a>
         </div>
         <div class='app-link app-link--support'>
-          <a href='{{application.support_link}}'>Support Website &gt;&gt;</a>
+          <a href='{{application.support_url}}'>Support Website &gt;&gt;</a>
         </div>
       </div>
     </div>

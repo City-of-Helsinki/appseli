@@ -5,8 +5,7 @@
     .app__publisher
       {{application.vendor}}
     .app__short-description
-      -# TODO: actual short description
-      {{application.description | translate | truncate:200}}
+      {{application.short_description | translate}}
 
   .app__details
     .app_details__first
@@ -17,46 +16,34 @@
         Rating:
         =render "rating"
       -# Why do .app__languages and .language-list__language repeat?
-      .app__languages
-        Category
-        -# TODO: m2m categories
+      .app__languages(ng-if="application.categories.length")
+        Categories
         %ul.language-list
-          %li.language-list__language {{application.category.name | translate}}
-      .app__languages
+          %li.language-list__language(ng-repeat="category in application.categories")
+            {{category.name | translate}}
+      .app__languages(ng-if="application.languages.length")
         Languages
         %ul.language-list
-          -# TODO: show full language names
-          %li.language-list__language(ng-repeat="language in application.languages") {{language}}
-      .app__languages
+          %li.language-list__language(ng-repeat="language in application.languages")
+            {{language | langCodeToName}}
+      .app__languages(ng-if="application.accessibilities.length")
         Accessibility
         %ul.language-list
-          %li.language-list__language Restricted Mobility
-          %li.language-list__language Hearing
-      .app__languages
-        -# TODO: what is this?
-        Web connection required
-      .app__version
-        -# TODO
-        Version
-        2.2.2.0
+          %li.language-list__language(ng-repeat="accessibility in application.accessibilities")
+            {{accessibility.name | translate}}
+      .app__version(ng-if="application.version")
+        Version {{application.version}}
       .app__updated
-        -# TODO
-        Updated
-        31.1.2014
+        Updated {{application.modified | date:"dd.MM.yyyy"}}
     .app__platforms
       %ul.platform-list
-        %li.platform-list__platform.platform-list__platform--ios
-          %a.platform__download(a href="#") iOS
-        %li.platform-list__platform.platform-list__platform--android
-          %a.platform__download(a href="#") Android
-        %li.platform-list__platform.platform-list__platform--windows
-          %a.platform__download(a href="#") Windows
+        %li.platform-list__platform(ng-repeat="platform in application.platforms" class="platform-list__platform--{{platform.slug}}")
+          %a.platform__download(href="{{platform.store_url}}") {{platform.name | translate}}
       .app__links
         .app__link.app-link--publisherwebsite
-          -# TODO
-          %a(href="#") Publisher Website &gt;&gt;
+          %a(href="{{application.publisher_url}}") Publisher Website &gt;&gt;
         .app-link.app-link--support
-          %a(href="{{application.support_link}}") Support Website &gt;&gt;
+          %a(href="{{application.support_url}}") Support Website &gt;&gt;
 
   .app__long-description
     {{application.description | translate}}
