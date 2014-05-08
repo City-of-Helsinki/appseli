@@ -3,6 +3,8 @@ django-modeltranslation
 djangorestframework
 markdown
 django-filter
+django_compressor
+hamlpy
 Pillow
 requests
 requests-cache
