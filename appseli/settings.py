@@ -120,33 +120,12 @@ REST_FRAMEWORK = {
 
 # Allow read operations to the api from all addresses
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/v1/.*$'
 CORS_ALLOW_METHODS = (
     'GET',
     'OPTIONS',
 )
-CORS_ALLOW_HEADERS = (
-    'x-requested-with',
-    'content-type',
-    'accept',
-    'origin',
-    'authorization',
-    'x-csrftoken',
-    'accept-language',
-)
 
-COMPRESS_ENABLED = True
-
-COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),
-    ('text/less', 'lessc {infile} {outfile}'),
-    ('text/x-sass', 'sass {infile} {outfile}'),
-    ('text/x-scss', 'sass --scss {infile} {outfile}'),
-)
-COMPRESS_JS_FILTERS = []
-
-
-TEMPLATE_LOADERS = (
-    'hamlpy.template.loaders.HamlPyFilesystemLoader',
-    'hamlpy.template.loaders.HamlPyAppDirectoriesLoader',
-)
+try:
+    from local_settings import *
+except ImportError:
+    pass

@@ -9,9 +9,8 @@ router.register(r'platform', views.PlatformViewSet)
 router.register(r'category', views.CategoryViewSet)
 router.register(r'accessibility', views.AccessibilityViewSet)
 
-
 urlpatterns =  patterns('',
-    url(r'^', include(router.urls)),
-    url(r'^auth/', include('rest_framework.urls',
+    url(r'^v1/', include(router.urls)),
+    url(r'^v1/auth/', include('rest_framework.urls',
                             namespace='rest_framework')),
 )

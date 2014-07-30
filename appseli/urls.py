@@ -5,17 +5,11 @@ from django.contrib import admin
 from django.views.generic import RedirectView
 
 
-ANGULAR_PROTO_INDEX_URL = "{}angular_proto/index.html".format(settings.STATIC_URL)
-
-
 admin.autodiscover()
-
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^proto/', include("proto_ui.urls")),
-    url(r'^angular/$', RedirectView.as_view(url=ANGULAR_PROTO_INDEX_URL)),
-    url(r'^v1/', include("apps.urls")),
+    url(r'', include("apps.urls")),
 )
 
 if settings.DEBUG:
@@ -23,7 +17,3 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT
     )
-
-urlpatterns += patterns('',
-    url(r'^', include("apps_ui.urls")),
-)
