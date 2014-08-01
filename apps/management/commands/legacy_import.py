@@ -9,10 +9,12 @@ from optparse import make_option
 import tempfile
 from bs4 import BeautifulSoup
 from django.core.files import File
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.text import slugify
 from django.utils import timezone
 from modeltranslation.utils import auto_populate
+from django.utils.translation.trans_real import activate, deactivate
 import requests
 from apps.models import (
     Application,
@@ -23,6 +25,16 @@ from apps.models import (
     ApplicationLanguageSupport,
 )
 
+class active_language:
+    def __init__(self, language):
+        self.language = language
+    def __enter__(self):
+        activate(self.language)
+        return self.language
+    def __exit__(self, type, value, traceback):
+        deactivate()
+
+SUPPORTED_LANGUAGES = map(lambda x: x[0], settings.LANGUAGES)
 
 BASE_URL = "http://apps.hel.fi/hel.fi"
 # The page displays different content for different user agents.
@@ -97,6 +109,13 @@ class Command(BaseCommand):
 
         logger.info("All done")
 
+def multilingual_set(src, src_field, dest, dest_field, process=None):
+    for lang in SUPPORTED_LANGUAGES:
+        with active_language(lang):
+            val = getattr(src[lang], src_field, None)
+            if process:
+                val = process(val)
+            setattr(dest, dest_field, val)
 
 def import_legacy_data():
     # Get / create platforms
@@ -108,7 +127,10 @@ def import_legacy_data():
             platform = Platform.objects.create(name=slug, slug=slug)
         platforms_by_slug[slug] = platform
 
-    for raw_application in fetch_raw_applications():
+    for raw_application_data in fetch_raw_applications():
+        # The English values are used as the default, for
+        # example for the category slug.
+        raw_application = raw_application_data['en']
         slug = slugify(raw_application.name)
         platform = platforms_by_slug[raw_application.platform_slug]
 
@@ -117,20 +139,17 @@ def import_legacy_data():
         try:
             category = Category.objects.get(slug=category_slug)
         except Category.DoesNotExist:
-            category = Category.objects.create(name=raw_application.category_name,
-                                               slug=category_slug)
-
+            category = Category.objects.create(slug=category_slug)
+            multilingual_set(raw_application_data, 'category_name',
+                             category, 'name')
+            category.save()
         # Get / create application
         try:
             application = Application.objects.get(slug=slug)
         except Application.DoesNotExist:
             # This data is only saved once
-            short_description = " ".join(raw_application.description.split()[:25]) + "..."
             application = Application.objects.create(
-                name=raw_application.name,
                 slug=slug,
-                short_description=short_description,
-                description=raw_application.description,
                 vendor=raw_application.publisher_name,
                 publish_date=raw_application.publish_date,
                 rating=0.0,
@@ -140,6 +159,21 @@ def import_legacy_data():
             image = fetch_file(raw_application.thumbnail_url)
             application.image.save("icon.{0}".format(image.file_ext), image)
             application.categories.add(category)
+
+        multilingual_set(
+            raw_application_data, 'name',
+            application, 'name'
+        )
+        multilingual_set(
+            raw_application_data, 'description',
+            application, 'description'
+        )
+        multilingual_set(
+            raw_application_data, 'description',
+            application, 'short_description',
+            process=lambda x: " ".join(x.split()[:25]) + "..."
+        )
+        application.save()
 
         # Get / create platform support
         supports_with_same_app = ApplicationPlatformSupport.objects.filter(
@@ -202,9 +236,15 @@ def fetch_raw_applications():
     for platform, user_agent in PLATFORMS:
         response = fetch("list.jsf?category=ALL", ua=user_agent)
         for app_url in parse_application_urls(response.content):
-            response = fetch(app_url, ua=user_agent)
-            yield parse_application_data(response.content,
-                                              platform_slug=platform)
+            data = {}
+            for lang in SUPPORTED_LANGUAGES:
+                response = fetch(app_url, ua=user_agent,
+                    headers= { 'Accept-Language': lang }
+                )
+                data[lang] = parse_application_data(
+                    response.content,
+                    platform_slug=platform)
+            yield data
 
 
 def parse_application_urls(html_content):
